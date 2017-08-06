@@ -1,0 +1,48 @@
+body{
+  background-image: linear-gradient(to bottom, #f43b47 0%, #453a94 100%);
+}
+
+#signup-modal{
+  margin-top: 15%;
+}
+
+.panel-title, .panel-heading, .panel-body, .panel-default{
+  background-color: #22313F !important;
+  color: #ffffff;
+  border-color: #22313F !important;
+}
+
+input.form-control{
+  background-color: #2C3E50;
+  border-color: #2C3E50;
+  color: #ffffff;
+}
+
+#submit-button, #exit-button{
+  background-color: #DB0A5B;
+  border-color: #DB0A5B;
+  width: 48%;
+  color: #ffffff;
+  font-weight: bolder;
+  float: right;
+}
+
+#submit-button{
+  float: left;
+}
+
+#patients li{
+  list-style-type: none;
+}
+
+#next-patient, #add-patient{
+  margin-top: 15px !important;
+  text-align: center;
+  display: block;
+  margin: auto;
+}
+
+#name{
+  background-color: #ffffff;
+  color: #000000  ;
+}
