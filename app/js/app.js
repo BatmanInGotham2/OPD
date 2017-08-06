@@ -51,7 +51,6 @@ window.onload = function() {
       add_patient.classList.remove('hide');
       submit_button.disabled = true;
     } else {
-      alert("The email and password you entered is incorrect");
       exit_button.classList.add('hide');
       next_patient.classList.add('hide');
       add_patient.classList.add('hide');
