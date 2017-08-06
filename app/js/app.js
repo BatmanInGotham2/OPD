@@ -30,11 +30,29 @@ window.onload = function() {
   });
 
   next_patient.addEventListener('click', e => {
-    var db = firebase.database().ref().once('value').then(snap => {
-      let remove_patient = Object.keys(snap.val())[0];
-      console.log(remove_patient);
-      firebase.database().ref().child(remove_patient).remove();
+    firebase.database().ref().once('value').then(snap => {
+      var people = snap.val();
+      var to_remove = 0;
+      if(people != null) {
+        let remove_patient = Object.keys(people)[to_remove];
+
+        if(people[remove_patient] === "Ready") {
+          firebase.database().ref(remove_patient).remove();
+          to_remove = 1;
+        }
+      }
+      if(people != null && Object.keys(people).length > 1) {
+        let ready_patient = Object.keys(snap.val())[to_remove];
+        var updates = {};
+        updates[ready_patient] = "Ready";
+        firebase.database().ref().update(updates);
+      }
     });
+  });
+
+  add_patient.addEventListener('click', e => {
+    new_user.value = '';
+    new_user.autofocus;
   });
 
   add_patient_form_button.addEventListener('click', e => {
@@ -45,7 +63,7 @@ window.onload = function() {
 
   firebase.auth().onAuthStateChanged(firebaseUser => {
     if(firebaseUser) {
-      alert("You logged on successfully!");
+      console.log("You logged on successfully!");
       exit_button.classList.remove('hide');
       next_patient.classList.remove('hide');
       add_patient.classList.remove('hide');
