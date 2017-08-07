@@ -19,6 +19,7 @@ window.onload = function() {
   const signup_modal = document.getElementById('signup-modal');
   const new_user = document.getElementById('name');
 
+
   submit_button.addEventListener('click', e => {
     firebase.auth().signInWithEmailAndPassword(email.value, password.value).catch(error => {
       console.log(error.code + " " + error.message);
@@ -30,23 +31,22 @@ window.onload = function() {
   });
 
   next_patient.addEventListener('click', e => {
-    firebase.database().ref().once('value').then(snap => {
-      var people = snap.val();
-      var to_remove = 0;
-      if(people != null) {
-        let remove_patient = Object.keys(people)[to_remove];
-
-        if(people[remove_patient] === "Ready") {
-          firebase.database().ref(remove_patient).remove();
-          to_remove = 1;
+    var patient = firebase.database().ref().limitToFirst(1);
+    
+    patient.once('value', snap => {
+      snap.forEach(child_snap => {
+        if(child_snap.val().status === "Ready") {
+          firebase.database().ref().child(child_snap.key).remove();
+          var new_patient = firebase.database().ref().limitToFirst(1);
+          new_patient.once('value', snapshot => {
+            snapshot.forEach(child => {
+              firebase.database().ref().child(child.key).update({status: "Ready"});
+            })
+          })
+        } else {
+          firebase.database().ref().child(child_snap.key).update({status: "Ready"});
         }
-      }
-      if(people != null && Object.keys(people).length > 1) {
-        let ready_patient = Object.keys(snap.val())[to_remove];
-        var updates = {};
-        updates[ready_patient] = "Ready";
-        firebase.database().ref().update(updates);
-      }
+      })
     });
   });
 
@@ -56,9 +56,11 @@ window.onload = function() {
   });
 
   add_patient_form_button.addEventListener('click', e => {
-    var newPerson = {};
-    newPerson[new_user.value] = "Not Ready";
-    firebase.database().ref().update(newPerson);
+    var newPerson = {
+      name: new_user.value,
+      status: "Not Ready"
+    };
+    var new_key_ref = firebase.database().ref().push(newPerson);
   });
 
   firebase.auth().onAuthStateChanged(firebaseUser => {

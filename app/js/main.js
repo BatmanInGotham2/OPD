@@ -9,18 +9,26 @@ window.onload = function() {
   };
   firebase.initializeApp(config);
 
-  // Initialize Firebase
-  var db = firebase.database().ref().once('value').then(snap => {
-    var people = snap.val();
-    for(var person in people) {
-      if(people.hasOwnProperty(person)) {
-        let patients = document.getElementById('patients');
-        let li = document.createElement('li');
-        li.innerText = person + ": " + people[person];
-        patients.append(li);
-      }
-    }
+  var patient = firebase.database().ref();
+  reload();
+  patient.on('child_changed', data => {
+    reload();
   });
 
-
+  function reload() {
+    var patients = document.getElementById('patients');
+    while(patients.firstChild)
+      patients.removeChild(patients.firstChild);
+    patient.once('value', snap => {
+      snap.forEach(child_snap => {
+        let li = document.createElement('li');
+        if(child_snap.val().status === "Ready")
+          li.classList.add("green");
+        else
+          li.classList.add("white");
+        li.innerText = child_snap.val().name + ": " + child_snap.val().status;
+        patients.append(li);
+      });
+    });
+  }
 }
